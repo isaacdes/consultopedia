@@ -51,6 +51,32 @@ db.collection('details').insertOne(data,function(err, collection){
           
     return res.redirect('login.html');
 })
+app.post('/login',function(req,res){
+    console.log("hello");
+    var Name = req.body.name;
+    var pass = req.body.password;
+    
+    db.collection('details').find().toArray(function(err, items) {
+            if(err) throw err;    
+            for(let i=0;i<items.length;i++)
+                {
+                    if(items[i].name===Name){
+                        if(items[i].password===pass)
+                            {
+                                console.log("valid account");
+                            }
+                        else{
+                            console.log("invalid password");
+                        }
+                        
+                    }
+                    else{
+                        console.log("invalid username")
+                    }
+                }
+        });
+
+
   
   
 app.get('/',function(req,res){

@@ -10,126 +10,108 @@
 
     <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.css">
-    
+    <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+   
     <link rel="stylesheet" href="css/owl.carousel.min.css">
 
     <link rel="stylesheet" href="css/aos.css">
     
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/lstyle.css">
+
+    <link rel="stylesheet"  href="css/registration.css">
   </head>
   <body>
-    
+    <div class="hero-wrap" style="background-color:slategrey" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
+            <div class="col-md-7 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
+              <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Login</h1>
+            </div>
+          </div>
+        </div>
+      </div>
   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
-      <a class="navbar-brand" href="index.html">Consultopedia</a>
+      <a class="navbar-brand" href="index.html">Consultopedia </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"               aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="oi oi-menu"></span> Menu
       </button>
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="nav-item "><a href="index.html" class="nav-link">Home</a></li>
           <li class="nav-item "><a href="about.html" class="nav-link">About</a></li>
           <li class="nav-item"><a href="event.html" class="nav-link">Events</a></li>
           <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-          <li class="nav-item"><a href="registration.html" class="nav-link">Sign up</a></li>
-          <li class="nav-item active"><a href="login.html" class="nav-link">Login</a></li>
+          <li class="nav-item active"><a href="registration.html" class="nav-link">Sign up</a></li>
+          <li class="nav-item"><a href="login.html" class="nav-link">Login</a></li>
         </ul>
       </div>
     </div>
   </nav>
-    <!-- END nav -->
-    
-    <div class="hero-wrap" style="background-color:slategrey" data-stellar-background-ratio="0.5">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-7 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Login</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-  
+    <div class="container small">
+        <h1>Login Form</h1>
 
-  
-  <div class="content">
-    <div class="container">
-      <div class="row justify-content-center">
-       
-        <div class="col-md-6 contents">
-          <div class="row justify-content-center">
-            <div class="col-md-12">
-              <div class="form-block">
-                  <div class="mb-4">
-                  <h3>Login</h3>
-                  <p class="mb-4> Enter Your Login Details </p>
-                </div>
-                <form action="#" method="post">
-                  <div class="form-group first">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username">
 
-                  </div>
-                  <div class="form-group last mb-4">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password">
+        <div class="row">
+            <div class="col"></div>
+            
+            <div class="col-sm-12">
+
+                <form action="/login" method="post">
+                    <div class="form-group">
+                        <label for="forName">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+      
                     
-                  </div>
+                    
                   
-                  <div class="d-flex mb-5 align-items-center">
-                    <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
-                      <input type="checkbox" checked="checked"/>
-                      <div class="control__indicator"></div>
-                    </label>
-                    <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span> 
-                  </div>
-
-                  <input type="submit" value="Log In" class="btn btn-pill text-white btn-block btn-primary">
-
-
-                    </a>
-                  </div>
+                    <div class="form-group">
+                        <label for="forName">Password</label>
+                        <input type="text" class="form-control" name="password" id="password" placeholder="min 6 characters"/>
+                                                                                                        
+                        
+                    </div>
+                    <input class="btn btn-primary btn-lg btnCenter" type="submit" value="Login"/>
+                    
                 </form>
-              </div>
+
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <footer class="ftco-footer ftco-section img">
+    	<div class="overlay"></div>
+      <div class="container">
+        <div class="row mb-12">
+          <div class="col-md-12">
+            <div class="ftco-footer-widget mb-12">
+              <ul class="ftco-footer-social list-unstyled  ">
+                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+              </ul>
             </div>
           </div>
-          
         </div>
         
       </div>
-    </div>
-  </div>
-  <footer class="ftco-footer ftco-section img">
-    <div class="overlay"></div>
-  <div class="container">
-    <div class="row mb-12">
-      <div class="col-md-12">
-        <div class="ftco-footer-widget mb-12">
-          <ul class="ftco-footer-social list-unstyled  ">
-            <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-            <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-            <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    </footer>
     
-  </div>
-</footer>
 
-
-<script src="js/jquery.min.js"></script>
-<script src="js/jquery-migrate-3.0.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.waypoints.min.js"></script>
-<script src="js/jquery.stellar.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-
-<script src="js/aos.js"></script>
-
-<script src="js/scrollax.min.js"></script>
-<script src="js/main.js"></script>
-</body>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.waypoints.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  
+  <script src="js/aos.js"></script>
+  
+  <script src="js/scrollax.min.js"></script>
+  <script src="js/main.js"></script>
+  </body>
 </html>
