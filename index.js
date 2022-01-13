@@ -24,6 +24,7 @@ app.post('/register', function(req,res){
     var pass = req.body.password;
     var phone =req.body.phone;
     var organization = req.body.organization;
+    var aadharNum=req.body.aadharNum;
     var address = req.body.address;
     var country = req.body.country;
     var pincode = req.body.pincode;
