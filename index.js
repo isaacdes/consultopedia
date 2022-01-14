@@ -2,7 +2,7 @@ var express=require("express");
 var bodyParser=require("body-parser");
   
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/gfg');
+mongoose.connect('mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true&w=majority');
 var db=mongoose.connection;
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function(callback){
@@ -54,27 +54,35 @@ db.collection('details').insertOne(data,function(err, collection){
 })
 app.post('/login',function(req,res){
     console.log("hello");
-    var Name = req.body.name;
+    var email = req.body.email;
     var pass = req.body.password;
+
     
     db.collection('details').find().toArray(function(err, items) {
             if(err) throw err;    
             for(let i=0;i<items.length;i++)
                 {
-                    if(items[i].name===Name){
-                        if(items[i].password===pass)
-                            {
-                                console.log("valid account");
-                            }
-                        else{
-                            console.log("invalid password");
-                        }
-                        
+                    console.log(email + pass);
+                    if(items[i].email === email && items[i].password === pass){
+                       console.log("Valid account");
+                       if( items[i].role == "admin") {
+                        return res.redirect('admin/Admin_Dashboard.html');
+                       }
+                       else if(items[i].role == "counselor") {
+                           //return res.redirect('');
+                           //return alert("Counselor Access");
+                       }
+                       else {
+                           //return alert("Customer access");
+                       }
                     }
                     else{
-                        console.log("invalid username")
+                        console.log("Invalid credentials");
+                        //return alert("Invalid");
+                        return res.redirect('login.html');
                     }
                 }
+                        
         });
     });
 
