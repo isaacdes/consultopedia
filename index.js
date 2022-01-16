@@ -97,7 +97,7 @@ app.post('/login',function(req,res){
     })
     app.get('/Admin_Counselors', function(req, res) {
         
-        console.log(na);
+        
         db.collection('details').find().toArray(function(err, items) {
             if(err) throw err;    
            else{
@@ -169,6 +169,53 @@ app.get('/', function(req, res) {
   app.get('/registration', function(req, res) {
   
     res.render('registration');
+  });
+  app.get('/Admin_Dashboard', function(req, res) {
+  
+    db.collection('details').find().toArray(function(err, items) {
+        if(err) throw err;    
+       else{
+
+        db.collection('bookings').find().toArray(function(err, elements) {
+             res.render('Admin_Dashboard',{
+                user:items,
+                bookings:elements})
+
+            })          
+        }})
+  });
+  app.get('/Admin_Session', function(req, res) {
+      var data=[];
+  
+    db.collection('details').find().toArray(function(err, items) {
+        if(err) throw err;    
+       else{
+
+        db.collection('bookings').find().toArray(function(err, elements) {
+              for(var i=0;i<elements.length;i++)
+              {   
+                for(var j=0;j<items.length;j++){
+                    console.log(ObjectId(elements[i].counselor_id))
+                    console.log(String(items[j]._id))
+                    if((elements[i].counselor_id)===String(items[j]._id))
+                    {
+                        console.log("hello");
+                        data.push({date:elements[i].date,
+                            time:elements[i].time,
+                            user_id:elements[i].user_id,
+                            counselor_id:elements[i].counselor_id,
+                            counselor_name:items[j].name})
+                            }
+                }
+                  
+              }
+              console.log(data)
+             res.render('Admin_Session',{
+                booking:data
+                })
+
+            })          
+        }})
   });
   app.post('/update', function(req, res) {
     var data={
