@@ -21,7 +21,7 @@
                 <a class="nav-link disabled">Events</a>
                 <a class="nav-link" href="Login.html">Login</a>
                 <a class="nav-link" href="Contact.html">Contact</a>
-                <a class="nav-link" href="Register.html">Sign up</a>
+                <a class="nav-link" href="registration">Sign up</a>
               </div>
             </div>
           </div>
@@ -39,10 +39,10 @@
                     <a class="nav-link" href="Admin_Dashboard.html">Dashboard</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link active" aria-current="page" href="Admin_Session.html">Session History</a>
+                    <a class="nav-link "  href="Admin_Session.html">Session History</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link" href="Admin_Customer.html">Customers</a>
+                    <a class="nav-link active" aria-current="page" href="Admin_Customers.html">Customers</a>
                   </li>
                   <li class="nav-item Nav_Pad">
                     <a class="nav-link" href="Admin_Counselor.html">Counselors</a>
@@ -58,29 +58,37 @@
                   <thead>
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">First</th>
-                      <th scope="col">Last</th>
-                      <th scope="col">Handle</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">Country</th>
+                      <th scope="col">Aadharnum</th>
+                      <th scope="col">phonenumber</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td colspan="2">Larry the Bird</td>
-                      <td>@twitter</td>
-                    </tr>
+                    <%let i=0%>
+                     <%user.forEach(item=>{%>
+                      <%if(item.role==='user'||item.role==='User'){%>
+                            <tr ><form action="/Admin_Customers" method="post">
+                              <%i=i+1%>
+                              <th scope="row"><input name="id" value="<%=item._id%>" type="hidden" readonly><%=i%></th>
+                              <td><input name="name" value="<%= item.name %>"  readonly></td>
+                              <td><input name="email" value="<%=item.email%>"  readonly></td>
+                              <td><input name="address" value="<%=item.address%>"  readonly></td>
+                              <td><input name="country" value="<%=item.country%>"  readonly></td>
+                              <td><input name="aadhar" value="<%=item.aadharNum%>" readonly></td>
+                              <td><input name="phone" value="<%=item.phone%>"  readonly></td>
+                              <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td>
+                              
+                            </form>
+                            <form action="/delete" method="post">
+                            <input name="id" value="<%=item._id%>" type="hidden" readonly>
+                            <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="delete" required/></td>
+                            </form> 
+                            </tr>
+                     <%}})%> 
+                     
                   </tbody>
                 </table>
               </div>
