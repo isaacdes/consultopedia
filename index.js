@@ -95,6 +95,20 @@ app.post('/login',function(req,res){
             });
       
     })
+    app.get('/Admin_Counselors', function(req, res) {
+        
+        console.log(na);
+        db.collection('details').find().toArray(function(err, items) {
+            if(err) throw err;    
+           else{
+                
+                 res.render('Admin_Counselors',{
+                    user:items })
+    
+                }           
+            });
+      
+    })
   
   
 /*app.get('/',function(req,res){
