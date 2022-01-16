@@ -58,29 +58,34 @@
                   <thead>
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">First</th>
-                      <th scope="col">Last</th>
-                      <th scope="col">Handle</th>
+                      <th scope="col">UserID</th>
+                      <th scope="col">CounselorId</th>
+                      <th scope="col">CounsellorName</th>
+                      <th scope="col">date</th>
+                      <th scope="col">time</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td colspan="2">Larry the Bird</td>
-                      <td>@twitter</td>
-                    </tr>
+                    <%let i=0%>
+                     <%booking.forEach(item=>{%>
+                            <tr ><form action="/Admin_Customers" method="post">
+                              <%i=i+1%>
+                              <th scope="row"><input name="id" value="<%=item._id%>" type="hidden" readonly><%=i%></th>
+                              <td><input name="name" value="<%= item['user_id'] %>"  readonly></td>
+                              <td><input name="email" value="<%=item['counselor_id']%>"  readonly></td>
+                              <td><input name="address" value="<%=item['counselor_name']%>"  readonly></td>
+                              <td><input name="country" value="<%=item['date']%>"  readonly></td>
+                              <td><input name="aadhar" value="<%=item['time']%>" readonly></td>
+                              <!--<td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td>
+                              
+                            </form>
+                            <form action="/delete" method="post">
+                            <input name="id" value="<%=item._id%>" type="hidden" readonly>
+                            <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="delete" required/></td>
+                            </form> -->
+                            </tr>
+                     <%})%> 
+                    
                   </tbody>
                 </table>
               </div>
