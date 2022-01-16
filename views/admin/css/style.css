@@ -9,9 +9,13 @@
     padding:10px 0px 10px 0px;
 }
 .Main_Data{
-    padding:10px 2px 2px 2px;
-}
-.Main_Body{
-    background-color:lightgray;
+    padding:10px ;
     height:100%;
+}
+
+body{
+    background-color:lightgray;
+}
+.ad-card{
+    width: 18rem;
 }
