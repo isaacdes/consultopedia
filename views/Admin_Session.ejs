@@ -71,8 +71,8 @@
                             <tr ><form action="/Admin_Customers" method="post">
                               <%i=i+1%>
                               <th scope="row"><input name="id" value="<%=item._id%>" type="hidden" readonly><%=i%></th>
-                              <td><input name="name" value="<%= item['user_id'] %>"  readonly></td>
-                              <td><input name="email" value="<%=item['counselor_id']%>"  readonly></td>
+                              <td><input name="name" value="<%= item[i].name %>"  readonly></td>
+                              <td><input name="email" value="<%=item[i].counselor_%>"  readonly></td>
                               <td><input name="address" value="<%=item['counselor_name']%>"  readonly></td>
                               <td><input name="country" value="<%=item['date']%>"  readonly></td>
                               <td><input name="aadhar" value="<%=item['time']%>" readonly></td>

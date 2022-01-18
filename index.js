@@ -293,9 +293,92 @@ app.post('/Admin_Customers', function (req, res) {
     });
 });
 
+// <<<<<<< Registration
 
 
 
+// =======
+//     res.render('registration');
+// });
+// app.get('/Customer_Dashboard', function (req, res) {
+//     var noOfCounselors=0;
+//     var noOfUsers=0;
+//     var noOfBookings=0;
+//     db.collection('details').find().toArray(function (err, items) {
+      
+//         for(var i=0;i<items.length;i++)
+//         {
+        
+//             console.log(items[i].role);
+
+//         if(items[i].role==="counselor"||items[i].role==="Counselor")
+//             {
+//                 console.log("if condditon");
+//                 noOfCounselors= noOfCounselors+1;
+//             }
+//         if(items[i].role==="user"||items[i].role==="User")
+//             {
+//                 noOfUsers =noOfUsers+1;
+//             }   
+        
+        
+//     }  
+//     db.collection('bookings').find().toArray(function (err, elements) {
+//         console.log(elements.length )
+//         noOfBookings=elements.length;
+//         console.log(noOfBookings)
+//         res.render('Customer_Dashboard', {
+//             NoOfCounselors:noOfCounselors,
+//             NoOfUsers:noOfUsers,
+//             NoOfBookings:noOfBookings
+//         })
+//       })
+      
+   
+//     })
+   
+    
+// });
+// app.get('/Counselor_Dashboard', function (req, res) {
+//     var noOfCounselors=0;
+//     var noOfUsers=0;
+//     var noOfBookings=0;
+//     db.collection('details').find().toArray(function (err, items) {
+      
+//         for(var i=0;i<items.length;i++)
+//         {
+        
+//             console.log(items[i].role);
+
+//         if(items[i].role==="counselor"||items[i].role==="Counselor")
+//             {
+//                 console.log("if condditon");
+//                 noOfCounselors= noOfCounselors+1;
+//             }
+//         if(items[i].role==="user"||items[i].role==="User")
+//             {
+//                 noOfUsers =noOfUsers+1;
+//             }   
+        
+        
+//     }  
+//     db.collection('bookings').find().toArray(function (err, elements) {
+//         console.log(elements.length )
+//         noOfBookings=elements.length;
+//         console.log(noOfBookings)
+//         res.render('Counselor_Dashboard', {
+//             NoOfCounselors:noOfCounselors,
+//             NoOfUsers:noOfUsers,
+//             NoOfBookings:noOfBookings
+//         })
+//       })
+      
+   
+//     })
+   
+    
+// });
+// >>>>>>> sprint-3
 app.get('/Customer_Counselor', function (req, res) {
     
     db.collection('details').find().toArray(function (err, items) {
@@ -309,8 +392,51 @@ app.get('/Customer_Counselor', function (req, res) {
         }
     });
 });
+// <<<<<<< Registration
 
 
+// =======
+// app.get('/Counselor_Customer', function (req, res) {
+//     //implemented a variable for current logged in couselor.make changes with session
+//     var LoggedCounselor="61e38dac92409ba1e9f33a28";
+//     var data=[]
+//     db.collection('bookings').find().toArray(function (err, items) {
+//         if (err) throw err;
+//         else {
+//             db.collection('details').find().toArray(function(err, elements) {
+
+
+//             for( var i=0;i<items.length;i++)
+//             {  
+//                 for( var j=0;j<elements.length;j++)
+//                 {
+
+//                     if(items[i]['counselor_id']===LoggedCounselor)
+//                         {  
+                            
+//                             if(String(elements[j]._id)===items[i]['user_id'])
+//                             {
+//                                 console.log(items[i]['time'])
+//                                 data.push({ userName:elements[j].name,
+//                                     userEmail:elements[j].email,
+//                                     time:items[i]['time']
+//                                     })
+//                             }
+//                         }
+                       
+//                     }
+//                 }
+//                 res.render('Counselor_Customer', {
+//                     booking: data
+//                 })
+//             });
+//         }
+//     });
+// });
+
+                        
+
+// >>>>>>> sprint-3
 app.get('/Admin_Session', function(req, res) {
     var data=[];
 
@@ -343,6 +469,41 @@ app.get('/Admin_Session', function(req, res) {
 
           })          
       }})
+});
+app.get('/Customer_Session', function(req, res) {
+    var data=[];
+
+  db.collection('details').find().toArray(function(err, items) {
+      if(err) throw err;    
+     else{
+
+      db.collection('bookings').find().toArray(function(err, elements) {
+            for(var i=0;i<elements.length;i++)
+            {   
+              for(var j=0;j<items.length;j++){
+                 
+                  if((elements[i].counselor_id)===String(items[j]._id))
+                  {
+                      console.log("hello");
+                      data.push({date:elements[i].date,
+                          time:elements[i].time,
+                          counselor_id:elements[i].counselor_id,
+                          counselor_name:items[j].name})
+                          }
+              }
+                
+            }
+            console.log(data)
+           res.render('Customer_Session',{
+              booking:data
+              })
+
+          })          
+      }})
+});
+app.get('/Counselor_Customer', function (req, res) {
+
+    res.render('Counselor_Customer');
 });
 
 app.get('/Customer_Dashboard', function (req, res) {
