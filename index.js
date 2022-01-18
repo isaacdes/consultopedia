@@ -1,132 +1,161 @@
-var express = require("express");
-var bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
+const session = require('express-session');
+const MongoDbSession = require('connect-mongodb-session')(session);
+const alert = require('alert');
+
+const bcrypt = require('bcrypt');
+
+const app = express()
 
 const mongoose = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
+
+const UserModel = require("./models/User");
+const mongoUri = "mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true";
+
 const { request } = require("express");
 mongoose.connect('mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true');
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function (callback) {
-    console.log("connection succeeded");
+    console.log("MongoDb connection succeeded");
 })
 
-var app = express()
-var na = "hello";
-app.set('view engine', 'ejs');
-app.use(bodyParser.json());
-app.use(express.static(__dirname + '/public/'));
 
-app.use(bodyParser.urlencoded({
-    extended: true
+const store = new MongoDbSession({
+    uri: mongoUri,
+    collection: "mySesionUsers"
+})
+
+app.use(session( {
+    secret: 'key to sign cookies',
+    resave: false,
+    saveUninitialized: false,
+    store: store
 }));
-var currentUser;
-app.post('/register', function (req, res) {
-    var name = req.body.name;
-    var email = req.body.email;
-    var pass = req.body.password;
-    var phone = req.body.phone;
-    var organization = req.body.organization;
-    var aadharNum = req.body.aadharNum;
-    var address = req.body.address;
-    var country = req.body.country;
-    var pincode = req.body.pincode;
-    var role = req.body.role;
 
-    var data = {
-        "name": name,
-        "email": email,
-        "organization": organization,
-        "address": address,
-        "country": country,
-        "pincode": pincode,
-        "aadharNum": aadharNum,
-        "role": role,
-        "password": pass,
-        "phone": phone
+
+
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public/'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+var currentUser;
+var na = "hello";
+
+const isAuth = (req, res, next) => {
+    if (req.session.isAuth) {
+        next()
+    } else {
+        res.redirect("/login");
     }
 
-    console.log(name + email + pass + phone);
-    db.collection('details').insertOne(data, function (err, collection) {
-        if (err) throw err;
-        console.log("Record inserted Successfully");
-
-    });
-
-    return res.redirect('login.html');
-})
+}
 
 
-app.post('/login', function (req, res) {
-    console.log("hello");
-    var Name = req.body.name;
-    var pass = req.body.password;
+// Register 
+app.post('/registration', async (req, res)=> {
 
-    db.collection('details').find().toArray(function (err, items) {
-        if (err) throw err;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].name === Name) {
-                if (items[i].password === pass) {
-                    console.log("valid account");
-                    currentUser=String(items[i]._id);
-                    var Id =items[i]._id;
-                    var User=items[i].name;
-                    var Email=items[i].email;
-                    var Pass = items[i].password;
-                    var Phone = items[i].phone;
-                    res.render('Customer_Profile', {
-                        id:Id,
-                        user: User,
-                        email:Email,
-                        pass:Pass,
-                        phone:Phone
-                    })
-                }
-                else {
-                    console.log("invalid password");
-                }
+    console.log("registraing status");
+    const {name, email, password, phone, organization,aadharNum, address, country, pincode, role} = req.body;
 
-            }
-            else {
-                console.log("invalid username")
-            }
+
+    let user = await UserModel.findOne({email});
+
+    if (user) {
+        // 
+        console.log("user with Emaild id exists");
+        return res.redirect('/registration');
+    }
+
+   const hashedPass = await bcrypt.hash(password, 12);
+   
+  // console.log(name + email+password+phone+organization+aadharNum+ address+country+pincode+role);
+
+    user = new UserModel({
+        name,
+        email,
+        password: hashedPass,
+        phone,
+        organization,
+        aadharNum,
+        address,
+        country,
+        pincode,
+        role,
+    })
+    await user.save();
+
+    return res.redirect('login');
+});
+
+app.get('/registration', function (req, res) {
+    const error = req.session.error;
+    delete req.session.error;
+    res.render('registration', {err: error});
+});
+
+
+
+app.post('/login', async (req, res) => {
+    console.log("logging in");
+
+    const { email, password} = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        req.session.error = "User not found";
+        return res.redirect('/login');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        req.session.error("Invalid credentialss");
+        return res.redirect('/login');
+    }
+
+    req.session.isAuth = true;
+    req.session.username = user.name;
+    req.session.emailId = user.email;
+    req.session.role =  user.role;
+
+    if(req.session.isAuth){
+        if (user.role === "admin"){
+        
+            return res.redirect("/Admin_Dashboard");
         }
+        else if (user.role === "customer") {
+            return res.redirect("/Customer_Dashboard"); 
+        }
+        else{
+            return res.redirect("/Counselor_Dashboard");
+        }
+    }
+    
+
+    
+    
+});
+
+app.get('/login', function (req, res) {
+    const error = req.session.error;
+    delete req.session.error;
+    res.render('login', {err: error});
+});
+
+app.post('/logout', function(req, res) {
+    console.log("Loggin out");
+    req.session.destroy((err) => {
+        if(err) throw err;
+        res.redirect('/login');
     });
 });
-app.post('/Customer_Counselor', function (req, res) {
-    var date = req.body.date;
-    var time = req.body.time;
-    var counselorID=req.body.id;
-    var userID=currentUser;
-   
 
-    var data = {
-        "user_id":userID,
-        "counselor_id":counselorID,
-        "date": date,
-        "time": time,   
-    }
-    console.log(counselorID);
-    
-    db.collection('bookings').insertOne(data, function (err, collection) {
-        if (err) throw err;
-        console.log("Record inserted Successfully");
-        db.collection('details').find().toArray(function (err, items) {
-        if (err) throw err;
-        else {
 
-            res.render('Customer_Counselor', {
-                user: items
-            })
 
-        }
-    });
-    });
-
-    
-})
-
-app.get('/Admin_Customers', function (req, res) {
+app.get('/Admin_Customers', isAuth,function (req, res) {
 
     console.log(na);
     db.collection('details').find().toArray(function (err, items) {
@@ -158,35 +187,83 @@ app.get('/Admin_Counselors', function (req, res) {
 })
 
 
-/*app.get('/',function(req,res){
-res.set({
-    'Access-control-Allow-Origin': '*'
-    });
-return res.redirect('registration.html');
-}).listen(3000)*/
-app.get('/', function (req, res) {
 
-    res.render('index');
-}).listen(3000);
-app.get('/about', function (req, res) {
 
-    res.render('about');
-});
-app.post('/Customer_Profile', function (req, res) {
-    var id = req.body.id;
-    var name = req.body.name;
-    var phone = req.body.phone;
-    var email = req.body.email;
-    var pass = req.body.pass;
-    res.render('update_customer', {
-        id: id,
-        name: name,
-        email: email,
-        pass: pass,
-        phone: phone
+
+//Customer Operations
+
+app.get('/Customer_Profile', isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+    let user = await UserModel.findOne({email});
+
+    // var session = req.session.username;
+    res.render('Customer_Profile', {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone
     });
 });
 
+
+app.post('/update_customer', isAuth, async (req, res) => {
+    
+
+    let email = req.session.emailId;
+    let user =  await UserModel.findOne({email});
+
+    const password = req.body.updatedPassword;
+    const phone = req.body.phone;
+
+    const hashedPass = await bcrypt.hash(password, 12);
+
+
+
+    user.phone = phone;
+    user.password = hashedPass;
+    user.save();
+    console.log("Changes are done");
+    alert("Changes are done");
+
+    res.redirect('/Customer_Profile');
+
+
+
+});
+
+app.post('/Customer_Counselor', function (req, res) {
+    var date = req.body.date;
+    var time = req.body.time;
+    var counselorID=req.body.id;
+    var userID=currentUser;
+   
+
+    var data = {
+        "user_id":userID,
+        "counselor_id":counselorID,
+        "date": date,
+        "time": time,   
+    }
+    console.log(counselorID);
+    
+    db.collection('bookings').insertOne(data, function (err, collection) {
+        if (err) throw err;
+        console.log("Record inserted Successfully");
+        db.collection('details').find().toArray(function (err, items) {
+        if (err) throw err;
+        else {
+
+            res.render('Customer_Counselor', {
+                user: items
+            })
+
+        }
+    });
+    });
+
+    
+});
 
 app.post('/Admin_Customers', function (req, res) {
     var id = req.body.id;
@@ -215,16 +292,10 @@ app.post('/Admin_Customers', function (req, res) {
         role: role
     });
 });
-/*app.get('/update', function(req, res) {
-   console.log(na);
-  res.render('update',{
-      name:"hello"
-  });
-});*/
-app.get('/registration', function (req, res) {
 
-    res.render('registration');
-});
+
+
+
 app.get('/Customer_Counselor', function (req, res) {
     
     db.collection('details').find().toArray(function (err, items) {
@@ -238,6 +309,8 @@ app.get('/Customer_Counselor', function (req, res) {
         }
     });
 });
+
+
 app.get('/Admin_Session', function(req, res) {
     var data=[];
 
@@ -273,18 +346,16 @@ app.get('/Admin_Session', function(req, res) {
 });
 
 app.get('/Customer_Dashboard', function (req, res) {
-
     res.render('Customer_Dashboard');
 });
-app.get('/login', function (req, res) {
 
-    res.render('login');
-});
-app.get('/registration', function (req, res) {
+// app.get('/Customer_Profile', function(req, res) {
+//     res.render('Customer_Profile');
+// });
 
-    res.render('registration');
-});
-app.get('/Admin_Dashboard', function(req, res) {
+
+
+app.get('/Admin_Dashboard', isAuth, (req, res) => {
   
     db.collection('details').find().toArray(function(err, items) {
         if(err) throw err;    
@@ -297,7 +368,10 @@ app.get('/Admin_Dashboard', function(req, res) {
 
             })          
         }})
+
   });
+
+
 app.post('/update', function (req, res) {
     var data = {
         name: req.body.name,
@@ -315,33 +389,8 @@ app.post('/update', function (req, res) {
     });
 
 });
-app.post('/update_customer', function (req, res) {
-    
-    var data = {
 
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        password: req.body.pass,
-        
-    }
-    
-    var id = req.body.id;
-    console.log("id",id);
-    db.collection('details').updateOne({ "_id": ObjectId(id) }, { $set: data }, function (err, collection) {
-        if (err) throw err;
-        console.log("Record updated Successfully");
-        res.render('Customer_Profile', {
-            id:id,
-            user:data['name'],
-            email:data['email'],
-            pass:data['password'],
-            phone:data['phone']
-        })
 
-    });
-
-});
 
 app.post('/delete', function (req, res) {
 
@@ -357,4 +406,22 @@ app.post('/delete', function (req, res) {
 
 
 
-console.log("server listening at port 3000");
+app.get('/about', function (req, res) {
+
+    res.render('about');
+});
+
+
+
+
+app.get('/', function( req, res) {
+
+   
+
+    // req.session.isAuth = true;
+    // console.log(req.session);
+    // console.log(req.session.id)
+    res.render('index');
+});
+
+app.listen(3000, console.log("Server Running on http://localhost:3000"));
