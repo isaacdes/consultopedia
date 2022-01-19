@@ -131,7 +131,7 @@ app.post('/login', async (req, res) => {
             console.log('admin access');
             return res.redirect("/Admin_Dashboard");
         }
-        else if (user.role === "customer") {
+        else if (user.role === "user") {
             console.log('customer access');
             return res.redirect("/Customer_Dashboard"); 
         }
@@ -164,7 +164,7 @@ app.post('/logout', function(req, res) {
 app.get('/Admin_Customers', isAuth,function (req, res) {
 
     console.log(na);
-    db.collection('details').find().toArray(function (err, items) {
+    db.collection('users').find().toArray(function (err, items) {
         if (err) throw err;
         else {
 
@@ -176,10 +176,10 @@ app.get('/Admin_Customers', isAuth,function (req, res) {
     });
 
 })
-app.get('/Admin_Counselors', function (req, res) {
+app.get('/Admin_Counselors', isAuth,async (req, res) => {
 
     console.log(na);
-    db.collection('details').find().toArray(function (err, items) {
+    db.collection('users').find().toArray(function (err, items) {
         if (err) throw err;
         else {
 
@@ -197,9 +197,13 @@ app.get('/Admin_Counselors', function (req, res) {
 
 
 //Customer Operations
-app.get('/Customer_Dashboard', function (req, res) {
+app.get('/Customer_Dashboard',  isAuth, async (req, res) => {
 
     let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+    console.log("***********"+user._id);
+    
 
     var noOfCounselors=0;
     var noOfUsers=0;
@@ -228,6 +232,14 @@ app.get('/Customer_Dashboard', function (req, res) {
         noOfBookings=elements.length;
         console.log(noOfBookings)
         res.render('Customer_Dashboard', {
+            id:user._id,
+            name: user.name,
+
+        email: user.email,
+
+        phone: user.phone,
+
+        role: user.role,
             NoOfCounselors:noOfCounselors,
             NoOfUsers:noOfUsers,
             NoOfBookings:noOfBookings
@@ -277,7 +289,7 @@ app.post('/update_customer', isAuth, async (req, res) => {
 
 
 app.get('/Customer_Session', isAuth, async(req, res) => {
-    if(req.session.role === "customer")
+    if(req.session.role === "user")
     {
         let email = req.session.emailId;
              
@@ -365,11 +377,17 @@ app.post('/Admin_Customers', function (req, res) {
 
 
 
-app.get('/Counselor_Dashboard', function (req, res) {
+app.get('/Counselor_Dashboard',  isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+    console.log("***********"+user._id);
+
     var noOfCounselors=0;
     var noOfUsers=0;
     var noOfBookings=0;
-    db.collection('details').find().toArray(function (err, items) {
+    db.collection('users').find().toArray(function (err, items) {
       
         for(var i=0;i<items.length;i++)
         {
@@ -393,6 +411,14 @@ app.get('/Counselor_Dashboard', function (req, res) {
         noOfBookings=elements.length;
         console.log(noOfBookings)
         res.render('Counselor_Dashboard', {
+            id:user._id,
+            name: user.name,
+
+        email: user.email,
+
+        phone: user.phone,
+
+        role: user.role,
             NoOfCounselors:noOfCounselors,
             NoOfUsers:noOfUsers,
             NoOfBookings:noOfBookings
@@ -404,6 +430,30 @@ app.get('/Counselor_Dashboard', function (req, res) {
    
     
 });
+
+app.get('/head2',  isAuth, async (req, res) => {
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+    console.log("***********"+user._id);
+    res.render('head2', {
+
+        id: user._id,
+
+        name: user.name,
+
+        email: user.email,
+
+        phone: user.phone,
+
+        role: user.role
+
+    });
+    
+   
+    
+});
+
 
 app.get('/Customer_Counselor', async (req, res) => {
 
@@ -511,26 +561,24 @@ app.post('/update_counselor', isAuth, async (req, res) => {
 app.get('/Admin_Session', function(req, res) {
     var data=[];
 
-  db.collection('details').find().toArray(function(err, items) {
+  db.collection('users').find().toArray(function(err, items) {
       if(err) throw err;    
      else{
 
       db.collection('bookings').find().toArray(function(err, elements) {
             for(var i=0;i<elements.length;i++)
             {   
-              for(var j=0;j<items.length;j++){
-                  console.log(ObjectId(elements[i].counselor_id))
-                  console.log(String(items[j]._id))
-                  if((elements[i].counselor_id)===String(items[j]._id))
-                  {
-                      console.log("hello");
+              
+                
+                  
+                          console.log("hello");
                       data.push({date:elements[i].date,
                           time:elements[i].time,
-                          user_id:elements[i].user_id,
-                          counselor_id:elements[i].counselor_id,
-                          counselor_name:items[j].name})
-                          }
-              }
+                          user_id:elements[i].user_email,
+                          counselor_id:elements[i].counselor_email,
+                          status:elements[i].status,
+                          })
+              
                 
             }
             console.log(data)
@@ -558,14 +606,26 @@ app.get('/Customer_Dashboard', function (req, res) {
 
 
 
-app.get('/Admin_Dashboard', isAuth, (req, res) => {
-  
-    db.collection('details').find().toArray(function(err, items) {
+app.get('/Admin_Dashboard',  isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+    console.log("***********"+user._id);
+    db.collection('users').find().toArray(function(err, items) {
         if(err) throw err;    
        else{
 
         db.collection('bookings').find().toArray(function(err, elements) {
              res.render('Admin_Dashboard',{
+                id:user._id,
+                name: user.name,
+    
+            email: user.email,
+    
+            phone: user.phone,
+    
+            role: user.role,
                 user:items,
                 bookings:elements})
 
@@ -599,14 +659,24 @@ app.post('/delete', function (req, res) {
 
     var id = req.body.id;
     console.log(id)
-    db.collection('details').deleteOne({ "_id": ObjectId(id) }, function (err, collection) {
+    db.collection('users').deleteOne({ "_id": ObjectId(id) }, function (err, collection) {
         if (err) throw err;
         console.log("Record deleted Successfully");
-
+        res.redirect('Admin_Customers')
     });
 
 });
+app.post('/deletecounselors', function (req, res) {
+console.log("deletecounselor");
+    var id = req.body.id;
+    console.log(id)
+    db.collection('users').deleteOne({ "_id": ObjectId(id) }, function (err, collection) {
+        if (err) throw err;
+        console.log("Record deleted Successfully");
+        res.redirect('Admin_Counselors')
+    });
 
+});
 
 
 app.get('/about', function (req, res) {
@@ -614,8 +684,35 @@ app.get('/about', function (req, res) {
     res.render('about');
 });
 
+app.get('/Contact', function (req, res) {
 
+    res.render('Contact');
+});
 
+app.get('/index',isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+    console.log("***********"+user._id);
+    res.render('index', {
+        id:user._id,
+        name: user.name,
+
+    email: user.email,
+
+    phone: user.phone,
+
+    role: user.role,
+        
+    })
+   
+
+    // req.session.isAuth = true;
+    // console.log(req.session);
+    // console.log(req.session.id)
+    
+});
 
 app.get('/', function( req, res) {
 

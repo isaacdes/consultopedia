@@ -8,25 +8,7 @@
     </head>
     <body>
         <!-- include nav bar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="#">Consultopedia</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                
-                
-                <form method="post" action="/logout">
-                  <input type="Submit" value="Logout" class="nav-link btn btn-primary btn-lsm" />
-
-                </form>
-              </div>
-            </div>
-          </div>
-        </nav>
+        
         <div class="container-fluid Main_Body">
             <div class="container-fluid">
               <div class="row">
@@ -60,7 +42,7 @@
                       
                       <th scope="col">Email</th>
                       <th scope="col">phone</th>
-                      <th scope="col">Change Password</th>
+                      <th scope="col">Password</th>
                      
                     </tr>
                 </thead>
@@ -72,7 +54,7 @@
                               
                               <td><input name="email" value="<%= email%>"  readonly></td>
                               <td><input name="phone" value="<%= phone%>"  type="number" ></td>
-                              <td><input name="updatedPassword" value=""/></td>
+                              <td><input type="password" name="updatedPassword" value="" required/></td>
                               
                               <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td>
                               </form>
