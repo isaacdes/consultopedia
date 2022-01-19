@@ -15,7 +15,7 @@ const UserModel = require("./models/User");
 const BookingModel = require('./models/Bookings');
 
 const mongoUri = "mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true";
-
+var nodemailer = require('nodemailer');
 const { request } = require("express");
 mongoose.connect('mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true');
 const db = mongoose.connection;
@@ -114,7 +114,7 @@ app.post('/login', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        req.session.error("Invalid credentialss");
+        
         return res.redirect('/login');
     }
 
@@ -497,17 +497,95 @@ app.get('/Counselor_Customer', function (req, res) {
 app.post('/Counselor_Customer_Accept', async (req, res) => {
 
     var id = req.body.id;  
-
-   // console.log(id);
+    var email=req.body.email;
+    var cemail=req.body.cemail;
+    //console.log(email);
     await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "accepted"}});
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'faaizt2@gmail.com',
+          pass: 'ddfgiks@123'
+        }
+      });
+      
+      var mailCustomer = {
+        from: 'faaizt2@gmail.com',
+        to: email,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with our counselor '+cemail+' is done'
+      };
+
+      var mailCounselor = {
+        from: 'faaizt2@gmail.com',
+        to: cemail,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with '+email+' is done'
+      };
+      
+      transporter.sendMail(mailCustomer, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+        transporter.sendMail(mailCounselor, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent to councelor: ' + info.response);
+            }
+        });
+      
     res.redirect('Counselor_Customer');
 });
 
 app.post('/Counselor_Customer_Decline', async (req, res) => {
     var id = req.body.id;
     //console.log(id)
+    var email=req.body.email;
+    //console.log(email);
+    var cemail=req.body.cemail;
 
     await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "declined"}});
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'faaizt2@gmail.com',
+          pass: 'ddfgiks@123'
+        }
+      });
+      
+      var mailCustomer = {
+        from: 'faaizt2@gmail.com',
+        to: email,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with our counselor '+cemail+' is declined due to some technical issues '
+      };
+
+      var mailCounselor = {
+        from: 'faaizt2@gmail.com',
+        to: cemail,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with '+email+'was declined by you'
+      };
+      
+      transporter.sendMail(mailCustomer, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+        transporter.sendMail(mailCounselor, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent to councelor: ' + info.response);
+            }
+        });
+      
     res.redirect('Counselor_Customer');
 });
 
