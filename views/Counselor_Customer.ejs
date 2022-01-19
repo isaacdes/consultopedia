@@ -59,6 +59,7 @@
                         <!-- <p class="card-text">Counselor Specilization</p> -->
                         <!-- Button trigger modal -->
                         <form action="/Counselor_Customer_Accept"  method="post">
+<<<<<<< Updated upstream
                         <input  value="<%=item.id%>"  name="id" type="hidden">
                         <button type="submit" class="btn btn-primary">
                             Accept
@@ -71,6 +72,24 @@
                             Decline
                         </button>
                       </form>
+=======
+                          <input  value="<%=item.id%>"  name="id" type="hidden">
+                          <input  value="<%=item.user_email%>"  name="email" type="hidden">
+                          <input  value="<%=item.counselor_email%>"  name="cemail" type="hidden">
+                          <button type="submit" class="btn btn-primary">
+                              Accept
+                          </button>
+                          </form>
+                          <form action="/Counselor_Customer_Decline"  method="post">
+                            <input  value="<%=item.id%>"  name="id" type="hidden">
+                            <input  value="<%=item.user_email%>"  name="email" type="hidden">
+                            <input  value="<%=item.counselor_email%>"  name="cemail" type="hidden">
+                          <button type="submit" class="btn btn-primary" 
+                              >
+                              Decline
+                          </button>
+                        </form>
+>>>>>>> Stashed changes
                       
 
                         <!-- Modal -->
