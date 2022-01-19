@@ -4,15 +4,12 @@ const session = require("express-session");
 const MongoDbSession = require("connect-mongodb-session")(session);
 const alert = require("alert");
 
-<<<<<<< Updated upstream
-const bcrypt = require("bcrypt");
 
-const app = express();
-=======
+
 const bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 const app = express()
->>>>>>> Stashed changes
+
 
 const mongoose = require("mongoose");
 const ObjectId = require("mongodb").ObjectId;
