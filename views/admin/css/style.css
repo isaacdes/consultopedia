@@ -1,0 +1,21 @@
+.container-fluid{
+    padding:0px;
+}
+.Slide_Bar{
+    margin-top: 10px;
+    padding-right: 0px;
+}
+.Nav_Pad{
+    padding:10px 0px 10px 0px;
+}
+.Main_Data{
+    padding:10px ;
+    height:100%;
+}
+
+body{
+    background-color:lightgray;
+}
+.ad-card{
+    width: 18rem;
+}
