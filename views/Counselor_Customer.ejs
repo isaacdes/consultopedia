@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Admin Dashboard</title>
+    <title>Counselors Request</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -9,36 +9,11 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="../admin/css/style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <!-- include nav bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Consultopedia</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="About.html">About us</a>
-            <a class="nav-link disabled">Events</a>
-            <a class="nav-link" href="Login.html">Login</a>
-            <a class="nav-link" href="Contact.html">Contact</a>
-            <a class="nav-link" href="Register.html">Sign up</a>
-          </div>
-        </div>
-      </div>
-    </nav>
+    
 
     <!-- admin section -->
     <div class="container-fluid Main_Body">
@@ -49,22 +24,18 @@
             <ul class="nav flex-column nav-pills nav-fill">
               <li class="nav-item Nav_Pad">
                 <a
-                  class="nav-link active"
-                  aria-current="page"
-                  href="Counselor_Dashboard.html"
-                  >Dashboard</a
+                  class="nav-link "aria-current="page"href="Counselor_Dashboard">Dashboard</a
                 >
               </li>
               <li class="nav-item Nav_Pad">
-                <a class="nav-link" href="Counselor_Session.html"
-                  >Session History</a
+                <a class="nav-link" href="Counselor_Session">Session History</a
                 >
               </li>
               <li class="nav-item Nav_Pad">
                 <a class="nav-link" href="Counselor_Profile">Profile</a>
               </li>
               <li class="nav-item Nav_Pad">
-                <a class="nav-link" href="Counselor_Customer.html">Requests</a>
+                <a class="nav-link active" href="Counselor_Customer">Requests</a>
               </li>
             </ul>
           </div>
@@ -79,21 +50,28 @@
                    
                 <div class="card">
                     <div class="card-body">
-                      <form action="/Customer_Counselor" onsubmit="return validateform()" method="post">
-                        <h5 class="card-title">Name:<%=item.userName%></h5>
-                        <h5 class="card-title">Email:<%=item.userEmail%></h5>
+                      
+                        <h5 class="card-title">Client Details</h5>
+                        <h5 class="card-title">Name:<%=item.user_name%> </h5>
+                        <h5 class="card-title">Email:<%=item.user_email%></h5>
+                        <h5 class="card-title">Date:<%=item.date%></h5>
                         <h5 class="card-title">Time:<%=item.time%></h5>
                         <!-- <p class="card-text">Counselor Specilization</p> -->
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#exampleModal">
+                        <form action="/Counselor_Customer_Accept"  method="post">
+                        <input  value="<%=item.id%>"  name="id" type="hidden">
+                        <button type="submit" class="btn btn-primary">
                             Accept
                         </button>
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#exampleModal">
+                        </form>
+                        <form action="/Counselor_Customer_Decline"  method="post">
+                          <input  value="<%=item.id%>"  name="id" type="hidden">
+                        <button type="submit" class="btn btn-primary" 
+                            >
                             Decline
                         </button>
                       </form>
+                      
 
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"

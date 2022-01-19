@@ -8,24 +8,7 @@
     </head>
     <body>
         <!-- include nav bar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="#">Consultopedia</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                <a class="nav-link" href="About.html">About us</a>
-                <a class="nav-link disabled">Events</a>
-                <a class="nav-link" href="Login.html">Login</a>
-                <a class="nav-link" href="Contact.html">Contact</a>
-                <a class="nav-link" href="registration">Sign up</a>
-              </div>
-            </div>
-          </div>
-        </nav>
+        
 
         <!-- admin section -->
         <div class="container-fluid Main_Body">
@@ -36,13 +19,13 @@
 
                 <ul class="nav flex-column nav-pills nav-fill">
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link" href="Admin_Dashboard.html">Dashboard</a>
+                    <a class="nav-link" href="Admin_Dashboard">Dashboard</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link "  href="Admin_Session.html">Session History</a>
+                    <a class="nav-link "  href="Admin_Session">Session History</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link " aria-current="page" href="Admin_Customers.html">Customers</a>
+                    <a class="nav-link " aria-current="page" href="Admin_Customers">Customers</a>
                   </li>
                   <li class="nav-item Nav_Pad">
                     <a class="nav-link active" href="Admin_Counselorls">Counselors</a>
@@ -79,10 +62,10 @@
                               <td><input name="country" value="<%=item.country%>"  readonly></td>
                               <td><input name="aadhar" value="<%=item.aadharNum%>" readonly></td>
                               <td><input name="phone" value="<%=item.phone%>"  readonly></td>
-                              <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td>
+                              <!-- <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td> -->
                               
                             </form>
-                            <form action="/delete" method="post">
+                            <form action="/deletecounselors" method="post">
                             <input name="id" value="<%=item._id%>" type="hidden" readonly>
                             <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="delete" required/></td>
                             </form> 
