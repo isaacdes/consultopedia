@@ -12,6 +12,8 @@ const mongoose = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
 
 const UserModel = require("./models/User");
+const BookingModel = require('./models/Bookings');
+
 const mongoUri = "mongodb+srv://Team2022:ddfgiks123@cluster0.0poxf.mongodb.net/gfg?retryWrites=true";
 
 const { request } = require("express");
@@ -100,7 +102,7 @@ app.get('/registration', function (req, res) {
 
 
 app.post('/login', async (req, res) => {
-    console.log("logging in");
+    
 
     const { email, password} = req.body;
 
@@ -116,6 +118,8 @@ app.post('/login', async (req, res) => {
         return res.redirect('/login');
     }
 
+    console.log("logging in user: " + email);
+
     req.session.isAuth = true;
     req.session.username = user.name;
     req.session.emailId = user.email;
@@ -124,12 +128,15 @@ app.post('/login', async (req, res) => {
     if(req.session.isAuth){
         if (user.role === "admin"){
         
+            console.log('admin access');
             return res.redirect("/Admin_Dashboard");
         }
         else if (user.role === "customer") {
+            console.log('customer access');
             return res.redirect("/Customer_Dashboard"); 
         }
         else{
+            console.log('counselor access');
             return res.redirect("/Counselor_Dashboard");
         }
     }
@@ -152,7 +159,6 @@ app.post('/logout', function(req, res) {
         res.redirect('/login');
     });
 });
-
 
 
 app.get('/Admin_Customers', isAuth,function (req, res) {
@@ -191,6 +197,48 @@ app.get('/Admin_Counselors', function (req, res) {
 
 
 //Customer Operations
+app.get('/Customer_Dashboard', function (req, res) {
+
+    let email = req.session.emailId;
+
+    var noOfCounselors=0;
+    var noOfUsers=0;
+    var noOfBookings=0;
+    db.collection('details').find().toArray(function (err, items) {
+      
+        for(var i=0;i<items.length;i++)
+        {
+        
+            console.log(items[i].role);
+
+        if(items[i].role==="counselor"||items[i].role==="Counselor")
+            {
+                console.log("if condditon");
+                noOfCounselors= noOfCounselors+1;
+            }
+        if(items[i].role==="user"||items[i].role==="User")
+            {
+                noOfUsers =noOfUsers+1;
+            }   
+        
+        
+    }  
+    db.collection('bookings').find().toArray(function (err, elements) {
+        console.log(elements.length )
+        noOfBookings=elements.length;
+        console.log(noOfBookings)
+        res.render('Customer_Dashboard', {
+            NoOfCounselors:noOfCounselors,
+            NoOfUsers:noOfUsers,
+            NoOfBookings:noOfBookings
+        })
+      })
+      
+   
+    })
+   
+    
+});
 
 app.get('/Customer_Profile', isAuth, async (req, res) => {
 
@@ -218,8 +266,6 @@ app.post('/update_customer', isAuth, async (req, res) => {
 
     const hashedPass = await bcrypt.hash(password, 12);
 
-
-
     user.phone = phone;
     user.password = hashedPass;
     user.save();
@@ -227,40 +273,64 @@ app.post('/update_customer', isAuth, async (req, res) => {
     alert("Changes are done");
 
     res.redirect('/Customer_Profile');
-
-
-
 });
 
-app.post('/Customer_Counselor', function (req, res) {
-    var date = req.body.date;
-    var time = req.body.time;
-    var counselorID=req.body.id;
-    var userID=currentUser;
+
+app.get('/Customer_Session', isAuth, async(req, res) => {
+    if(req.session.role === "customer")
+    {
+        let email = req.session.emailId;
+             
+
+        BookingModel.find({user_email: email}, function(err, docs){
+
+            console.log(docs);
+            res.render('Customer_Session', {booking: docs});
+            
+        });
+      
+    }
+    else{
+        console.log("Logging out since not a customer");
+    
+    req.session.destroy((err) => {
+            if(err) throw err;
+            res.redirect('/login');
+        });
+    }
+    
+  
+
+    
+});
+
+
+
+app.post('/Customer_Counselor', async (req, res) => {
+    const {counselor_email, counselour_name, date, time} = req.body;
+    
+    let email = req.session.emailId;
+
+    let user = UserModel.find({email}); 
+    // console.log(email);
+
+    //console.log(date + time + " " + id);
+
+    bookings = new BookingModel({
+        user_email: email,
+        counselor_email,
+        date,
+        time,
+        status: "processing",
+        counselour_name,
+    });
+    // console.log(bookings);
+    await bookings.save();
+    alert("Appointed Booked");
+    res.redirect('/Customer_Counselor');
+
    
 
-    var data = {
-        "user_id":userID,
-        "counselor_id":counselorID,
-        "date": date,
-        "time": time,   
-    }
-    console.log(counselorID);
-    
-    db.collection('bookings').insertOne(data, function (err, collection) {
-        if (err) throw err;
-        console.log("Record inserted Successfully");
-        db.collection('details').find().toArray(function (err, items) {
-        if (err) throw err;
-        else {
-
-            res.render('Customer_Counselor', {
-                user: items
-            })
-
-        }
-    });
-    });
 
     
 });
@@ -293,146 +363,147 @@ app.post('/Admin_Customers', function (req, res) {
     });
 });
 
-// <<<<<<< Registration
 
 
-
-// =======
-//     res.render('registration');
-// });
-// app.get('/Customer_Dashboard', function (req, res) {
-//     var noOfCounselors=0;
-//     var noOfUsers=0;
-//     var noOfBookings=0;
-//     db.collection('details').find().toArray(function (err, items) {
-      
-//         for(var i=0;i<items.length;i++)
-//         {
-        
-//             console.log(items[i].role);
-
-//         if(items[i].role==="counselor"||items[i].role==="Counselor")
-//             {
-//                 console.log("if condditon");
-//                 noOfCounselors= noOfCounselors+1;
-//             }
-//         if(items[i].role==="user"||items[i].role==="User")
-//             {
-//                 noOfUsers =noOfUsers+1;
-//             }   
-        
-        
-//     }  
-//     db.collection('bookings').find().toArray(function (err, elements) {
-//         console.log(elements.length )
-//         noOfBookings=elements.length;
-//         console.log(noOfBookings)
-//         res.render('Customer_Dashboard', {
-//             NoOfCounselors:noOfCounselors,
-//             NoOfUsers:noOfUsers,
-//             NoOfBookings:noOfBookings
-//         })
-//       })
-      
-   
-//     })
-   
-    
-// });
-// app.get('/Counselor_Dashboard', function (req, res) {
-//     var noOfCounselors=0;
-//     var noOfUsers=0;
-//     var noOfBookings=0;
-//     db.collection('details').find().toArray(function (err, items) {
-      
-//         for(var i=0;i<items.length;i++)
-//         {
-        
-//             console.log(items[i].role);
-
-//         if(items[i].role==="counselor"||items[i].role==="Counselor")
-//             {
-//                 console.log("if condditon");
-//                 noOfCounselors= noOfCounselors+1;
-//             }
-//         if(items[i].role==="user"||items[i].role==="User")
-//             {
-//                 noOfUsers =noOfUsers+1;
-//             }   
-        
-        
-//     }  
-//     db.collection('bookings').find().toArray(function (err, elements) {
-//         console.log(elements.length )
-//         noOfBookings=elements.length;
-//         console.log(noOfBookings)
-//         res.render('Counselor_Dashboard', {
-//             NoOfCounselors:noOfCounselors,
-//             NoOfUsers:noOfUsers,
-//             NoOfBookings:noOfBookings
-//         })
-//       })
-      
-   
-//     })
-   
-    
-// });
-// >>>>>>> sprint-3
-app.get('/Customer_Counselor', function (req, res) {
-    
+app.get('/Counselor_Dashboard', function (req, res) {
+    var noOfCounselors=0;
+    var noOfUsers=0;
+    var noOfBookings=0;
     db.collection('details').find().toArray(function (err, items) {
-        if (err) throw err;
-        else {
+      
+        for(var i=0;i<items.length;i++)
+        {
+        
+            console.log(items[i].role);
 
-            res.render('Customer_Counselor', {
-                user: items
-            })
-
-        }
-    });
+        if(items[i].role==="counselor"||items[i].role==="Counselor")
+            {
+                console.log("if condditon");
+                noOfCounselors= noOfCounselors+1;
+            }
+        if(items[i].role==="user"||items[i].role==="User")
+            {
+                noOfUsers =noOfUsers+1;
+            }   
+        
+        
+    }  
+    db.collection('bookings').find().toArray(function (err, elements) {
+        console.log(elements.length )
+        noOfBookings=elements.length;
+        console.log(noOfBookings)
+        res.render('Counselor_Dashboard', {
+            NoOfCounselors:noOfCounselors,
+            NoOfUsers:noOfUsers,
+            NoOfBookings:noOfBookings
+        })
+      })
+      
+   
+    })
+   
+    
 });
-// <<<<<<< Registration
+
+app.get('/Customer_Counselor', async (req, res) => {
+
+    UserModel.find({role: 'counselor'}, function(err, docs){
+        if(err){
+            console.log('no records found or error');
+        }
+        console.log(docs);
+        res.render('Customer_Counselor', {user: docs});
+    });
+
+});
 
 
-// =======
-// app.get('/Counselor_Customer', function (req, res) {
-//     //implemented a variable for current logged in couselor.make changes with session
-//     var LoggedCounselor="61e38dac92409ba1e9f33a28";
-//     var data=[]
-//     db.collection('bookings').find().toArray(function (err, items) {
-//         if (err) throw err;
-//         else {
-//             db.collection('details').find().toArray(function(err, elements) {
+//Counselor Operations
+app.get('/Counselor_Customer', function (req, res) {
+    
+    if(req.session.role === "counselor")
+    {
+        let email = req.session.emailId;
+             
+
+        BookingModel.find({counselor_email: email , status: "processing"}, function(err, docs){
+
+            //console.log(docs);
+            res.render('Counselor_Customer', {booking: docs});
+            
+        });
+      
+    }
+    else{
+        console.log("Logging out since not a counselor");
+    
+    req.session.destroy((err) => {
+            if(err) throw err;
+            res.redirect('/login');
+        });
+    }
+});
+
+app.post('/Counselor_Customer_Accept', async (req, res) => {
+
+    var id = req.body.id;  
+
+   // console.log(id);
+    await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "accepted"}});
+    res.redirect('Counselor_Customer');
+});
+
+app.post('/Counselor_Customer_Decline', async (req, res) => {
+    var id = req.body.id;
+    //console.log(id)
+
+    await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "declined"}});
+    res.redirect('Counselor_Customer');
+});
 
 
-//             for( var i=0;i<items.length;i++)
-//             {  
-//                 for( var j=0;j<elements.length;j++)
-//                 {
+app.get('/Counselor_Session', async(req, res) => {
+    res.redirect('/Counselor_Session');
+});
 
-//                     if(items[i]['counselor_id']===LoggedCounselor)
-//                         {  
-                            
-//                             if(String(elements[j]._id)===items[i]['user_id'])
-//                             {
-//                                 console.log(items[i]['time'])
-//                                 data.push({ userName:elements[j].name,
-//                                     userEmail:elements[j].email,
-//                                     time:items[i]['time']
-//                                     })
-//                             }
-//                         }
-                       
-//                     }
-//                 }
-//                 res.render('Counselor_Customer', {
-//                     booking: data
-//                 })
-//             });
-//         }
-//     });
-// });
+app.get('/Counselor_Profile', isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({email});
+
+    res.render('Counselor_Profile', {
+
+        id: user._id,
+
+        name: user.name,
+
+        email: user.email,
+
+        phone: user.phone
+
+    });
+
+});
+
+app.post('/update_counselor', isAuth, async (req, res) => {
+
+    let email = req.session.emailId;
+
+    let user =  await UserModel.findOne({email});
+
+    const password = req.body.updatedPassword;
+    const phone = req.body.phone;
+    const hashedPass = await bcrypt.hash(password, 12);
+
+    user.phone = phone;
+    user.password = hashedPass;
+    user.save();
+    console.log("Changes are done");
+    alert("Changes are done");
+    res.redirect('/Counselor_Profile');
+});
+
 
                         
 
@@ -470,37 +541,8 @@ app.get('/Admin_Session', function(req, res) {
           })          
       }})
 });
-app.get('/Customer_Session', function(req, res) {
-    var data=[];
 
-  db.collection('details').find().toArray(function(err, items) {
-      if(err) throw err;    
-     else{
 
-      db.collection('bookings').find().toArray(function(err, elements) {
-            for(var i=0;i<elements.length;i++)
-            {   
-              for(var j=0;j<items.length;j++){
-                 
-                  if((elements[i].counselor_id)===String(items[j]._id))
-                  {
-                      console.log("hello");
-                      data.push({date:elements[i].date,
-                          time:elements[i].time,
-                          counselor_id:elements[i].counselor_id,
-                          counselor_name:items[j].name})
-                          }
-              }
-                
-            }
-            console.log(data)
-           res.render('Customer_Session',{
-              booking:data
-              })
-
-          })          
-      }})
-});
 app.get('/Counselor_Customer', function (req, res) {
 
     res.render('Counselor_Customer');
