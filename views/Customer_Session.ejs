@@ -22,7 +22,7 @@
                     <a class="nav-link " href="Customer_Dashboard">Dashboard</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link active" aria-current="page" href="Customer_Session">Session History</a>
+                    <a class="nav-link active" aria-current="page" href="Customer_Session">Session </a>
                   </li>
                   <li class="nav-item Nav_Pad">
                     <a class="nav-link" href="Customer_Profile">Profile</a>
@@ -59,11 +59,11 @@
                             <tr ><form action="#" method="post">
                               <%i=i+1%>
                               <th scope="row"><input name="id" value="<%=item._id%>" type="hidden" readonly><%=i%></th>
-                              <td><input name="country" value="<%=item['date']%>"  readonly></td>
-                              <td><input name="aadhar" value="<%=item['time']%>" readonly></td>
-                              <td><input name="address" value="<%=item['counselour_name']%>"  readonly></td>
-                              <td><input name="address" value="<%=item['counselor_email']%>"  readonly></td>
-                              <td><input name="address" value="<%=item['status']%>"  readonly></td>
+                              <td><input class="rm" name="country" value="<%=item['date']%>"  readonly></td>
+                              <td><input class="rm" name="aadhar" value="<%=item['time']%>" readonly></td>
+                              <td><input class="rm" name="address" value="<%=item['counselour_name']%>"  readonly></td>
+                              <td><input class="rm" name="address" value="<%=item['counselor_email']%>"  readonly></td>
+                              <td><input class="rm" name="address" value="<%=item['status']%>"  readonly></td>
                               <!--<td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td>
                               
                             </form>

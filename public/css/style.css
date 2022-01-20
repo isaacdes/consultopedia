@@ -80,7 +80,7 @@ footer .social a {
     margin-bottom:0px;
 }
 .linked {
-    background-color:royalblue;
+    background-color:mediumorchid;
     font-size: 10px;
     width: 25%;
   }
@@ -110,4 +110,11 @@ footer .social a {
   }
   .height{
     height:100%;
+  }
+  .rm{
+    outline: hidden;
+    border:hidden;
+  }
+  .rm:focus {
+    outline: none;
   }

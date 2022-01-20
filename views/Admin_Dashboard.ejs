@@ -47,13 +47,13 @@
                   <div class="col-4">
                     <div class="card ad-card" style="width: 18rem;">
                       <img class="card-img-top" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4CYlKu3iOg5g8G_ySC-HeFbeyBIxBLEMWkg&usqp=CAU" alt="Card image cap">
-                      <div class="card-body"><center>
+                      <div class="card-body">
                         <h5 class="card-title">Counselors</h5>
                         <%i=0%>
                         <%user.forEach(item=>{%>
                         <%if(item.role==='counselor'||item.role==='Counselor'){i=i+1}})%>
-                        <p class="card-text">No of counselors:<h1><%=i%></h1></center></p>
-                        <a href="Admin_Counselor.html" class="btn btn-primary">Counselors</a>
+                        <p class="card-text">No of counselors:<center><h1><%=i%></h1></center></p>
+                        <a href="Admin_Counselors" class="btn btn-primary">Counselors</a>
                       </div>
                     </div>
                   </div>
@@ -66,7 +66,7 @@
                         <%user.forEach(item=>{%>
                         <%if(item.role==='user'||item.role==='User'){i=i+1}})%>
                         <p class="card-text">Number of Customers:<center><h1><%=i%></h1></center></p>
-                        <a href="Admin_Customers.html" class="btn btn-primary">Customers</a>
+                        <a href="Admin_Customers" class="btn btn-primary">Customers</a>
                       </div>
                     </div>
                   </div>
@@ -79,7 +79,7 @@
                       <div class="card-body">
                         <h5 class="card-title">Sessions</h5>
                         <p class="card-text">Total no of sessions:<center><h1><%=bookings.length%></h1></center></p>
-                        <a href="Admin_Session.html" class="btn btn-primary">Sessions</a>
+                        <a href="Admin_Session" class="btn btn-primary">Sessions</a>
                       </div>
                     </div>
                   </div>

@@ -21,7 +21,7 @@
                     <a class="nav-link" href="Admin_Dashboard">Dashboard</a>
                   </li>
                   <li class="nav-item Nav_Pad">
-                    <a class="nav-link "  href="Admin_Session">Session History</a>
+                    <a class="nav-link "  href="Admin_Session">Session </a>
                   </li>
                   <li class="nav-item Nav_Pad">
                     <a class="nav-link active" aria-current="page" href="Admin_Customers">Customers</a>
@@ -55,12 +55,12 @@
                             <tr ><form action="/Admin_Customers" method="post">
                               <%i=i+1%>
                               <th scope="row"><input name="id" value="<%=item._id%>" type="hidden" readonly><%=i%></th>
-                              <td><input name="name" value="<%= item.name %>"  readonly></td>
-                              <td><input name="email" value="<%=item.email%>"  readonly></td>
-                              <td><input name="address" value="<%=item.address%>"  readonly></td>
-                              <td><input name="country" value="<%=item.country%>"  readonly></td>
-                              <td><input name="aadhar" value="<%=item.aadharNum%>" readonly></td>
-                              <td><input name="phone" value="<%=item.phone%>"  readonly></td>
+                              <td><input class="rm" name="name" value="<%= item.name %>"  readonly></td>
+                              <td><input class="rm" name="email" value="<%=item.email%>"  readonly></td>
+                              <td><input class="rm" name="address" value="<%=item.address%>"  readonly></td>
+                              <td><input class="rm" name="country" value="<%=item.country%>"  readonly></td>
+                              <td><input class="rm" name="aadhar" value="<%=item.aadharNum%>" readonly></td>
+                              <td><input class="rm" name="phone" value="<%=item.phone%>"  readonly></td>
                               <!-- <td><input class="btn btn-primary btn-sm btnCenter"  type="submit" value="update" required/></td> -->
                               
                             </form>

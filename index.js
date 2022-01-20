@@ -84,7 +84,11 @@ app.post("/registration", async (req, res) => {
     console.log("user with Emaild id exists");
     return res.redirect("/registration");
   }
-
+  let query2 =await UserModel.findOne({aadharNum});
+  if (query2){
+  alert("Aadhar no Already Used!");
+  return res.redirect("/registration");
+  }
   const hashedPass = await bcrypt.hash(password, 12);
 
   // console.log(name + email+password+phone+organization+aadharNum+ address+country+pincode+role);
@@ -102,7 +106,11 @@ app.post("/registration", async (req, res) => {
     role,
   });
   await user.save();
+  //registration
 
+
+
+  
   return res.redirect("login");
 });
 
@@ -203,7 +211,7 @@ app.get("/Customer_Dashboard", isAuth, async (req, res) => {
   var noOfCounselors = 0;
   var noOfUsers = 0;
   var noOfBookings = 0;
-  db.collection("details")
+  db.collection("users")
     .find()
     .toArray(function (err, items) {
       for (var i = 0; i < items.length; i++) {
@@ -441,31 +449,114 @@ app.get("/Counselor_Customer", function (req, res) {
   }
 });
 
-app.post("/Counselor_Customer_Accept", async (req, res) => {
-  var id = req.body.id;
+app.post('/Counselor_Customer_Accept', async (req, res) => {
 
-  // console.log(id);
-  await BookingModel.updateOne(
-    { _id: ObjectId(id) },
-    { $set: { status: "accepted" } }
-  );
-  res.redirect("Counselor_Customer");
+    var id = req.body.id;  
+    var email=req.body.email;
+    var cemail=req.body.cemail;
+    //console.log(email);
+    await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "accepted"}});
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'faaizt2@gmail.com',
+          pass: 'ddfgiks@123'
+        }
+      });
+      
+      var mailCustomer = {
+        from: 'faaizt2@gmail.com',
+        to: email,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with our counselor '+cemail+' is done'
+      };
+
+      var mailCounselor = {
+        from: 'faaizt2@gmail.com',
+        to: cemail,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with '+email+' is done'
+      };
+      
+      transporter.sendMail(mailCustomer, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+        transporter.sendMail(mailCounselor, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent to councelor: ' + info.response);
+            }
+        });
+      
+    res.redirect('Counselor_Customer');
 });
 
-app.post("/Counselor_Customer_Decline", async (req, res) => {
-  var id = req.body.id;
-  //console.log(id)
+app.post('/Counselor_Customer_Decline', async (req, res) => {
+    var id = req.body.id;
+    //console.log(id)
+    var email=req.body.email;
+    //console.log(email);
+    var cemail=req.body.cemail;
 
-  await BookingModel.updateOne(
-    { _id: ObjectId(id) },
-    { $set: { status: "declined" } }
-  );
-  res.redirect("Counselor_Customer");
+    await BookingModel.updateOne({ "_id": ObjectId(id)}, { $set: {status: "declined"}});
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'faaizt2@gmail.com',
+          pass: 'ddfgiks@123'
+        }
+      });
+      
+      var mailCustomer = {
+        from: 'faaizt2@gmail.com',
+        to: email,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with our counselor '+cemail+' is declined due to some technical issues '
+      };
+
+      var mailCounselor = {
+        from: 'faaizt2@gmail.com',
+        to: cemail,
+        subject: 'Couselor appointment',
+        text: 'your appoinment with '+email+'was declined by you'
+      };
+      
+      transporter.sendMail(mailCustomer, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+        transporter.sendMail(mailCounselor, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent to councelor: ' + info.response);
+            }
+        });
+      
+    res.redirect('Counselor_Customer');
 });
+
+
+
+
 
 app.get("/Counselor_Session", async (req, res) => {
-  res.redirect("/Counselor_Session");
-});
+    console.log("counselor session ");
+    
+    let email = req.session.emailId;
+    BookingModel.find({counselor_email: email}, function(err, doc){
+    res.render('Counselor_Session', {booking: doc});
+    })
+})
+
 
 app.get("/Counselor_Profile", isAuth, async (req, res) => {
   let email = req.session.emailId;
@@ -547,7 +638,7 @@ app.get("/Admin_Dashboard", isAuth, async (req, res) => {
   let email = req.session.emailId;
 
   let user = await UserModel.findOne({ email });
-  console.log("***********" + user._id);
+  
   db.collection("users")
     .find()
     .toArray(function (err, items) {
@@ -657,11 +748,29 @@ app.get("/index", async (req, res) => {
   // console.log(req.session.id)
 });
 
-app.get("/", function (req, res) {
+app.get("/", async (req, res) => {
   // req.session.isAuth = true;
   // console.log(req.session);
   // console.log(req.session.id)
-  res.render("index");
+  if (req.session.isAuth) {
+    console.log("====================autho");
+    let email = req.session.emailId;
+
+    let user = await UserModel.findOne({ email });
+    console.log("***********" + user._id);
+    res.render("index", {
+      id: user._id,
+      name: user.name,
+
+      email: user.email,
+
+      phone: user.phone,
+        auth:true,
+      role: user.role,
+    });
+  } else {
+    res.render("index", { auth:false, role: "", id: "" });
+  }
 });
 
 app.listen(3000, console.log("Server Running on http://localhost:3000"));
